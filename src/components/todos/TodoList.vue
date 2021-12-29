@@ -8,7 +8,9 @@
       @toggle-done="toggleDone"
       ></todo-list-item>
 
-      <todo-list-form></todo-list-form>
+      <todo-list-form
+        @create-todo="createTodo"
+      ></todo-list-form>
   </ul>
 </template>
 
@@ -28,6 +30,8 @@ export default {
   // === local state (local reactive properties) ===
   data() {
     return {
+      todosCounter: 10,
+
       todos: [{
         id: 1,
         title: "Buy milk",
@@ -45,8 +49,13 @@ export default {
   },
 
   methods: {
+    createTodo( todoTitle ) {
+      this.todos.push({
+        id: this.todosCounter++,
+        title: todoTitle,
+      })
+    },
     toggleDone( id ) {
-      console.log("toggle done")
       this.todos.forEach(todo => {
         if (todo.id === id) {
           todo.done = !todo.done;
@@ -54,7 +63,6 @@ export default {
       })
     },
     deleteTodo( id ) {
-      console.log("delete todo")
       this.todos = this.todos.filter( todo => todo.id !== id);
     }
   }
