@@ -1,5 +1,5 @@
 <template>
-  <li class="list-group-item" @click="$emit('toggleDone', this.todoItem.id)">
+  <li class="list-group-item" @click="$emit('toggleDone', this.todoItem)">
     <div class="d-flex w-100 justify-content-between align-items-center">
       <div class="d-flex">
         <div class="me-2">

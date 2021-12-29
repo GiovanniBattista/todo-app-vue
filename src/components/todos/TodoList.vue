@@ -19,51 +19,62 @@ so we cannot just name the component Todos.vue
 https://v3.vuejs.org/style-guide/#multi-word-component-names-essential
 -->
 
+
 <script>
 import TodoListItem from './TodoListItem'
-import TodoListForm from './TodoListForm';
+import TodoListForm from './TodoListForm'
+import todoService from '/api/TodoService'
 
 export default {
   // === template dependencies (assets used in the template) ===
   components: { TodoListItem, TodoListForm },
 
+  // NOTE: if implementing further functionality (e.g. sorting, filtering, etc)
+  // use composition API in own <script setup> tag.
+  // Only this should be needed then
+
   // === local state (local reactive properties) ===
   data() {
     return {
-      todosCounter: 10,
+      todos: []
+    }      
+  },
 
-      todos: [{
-        id: 1,
-        title: "Buy milk",
-        done: false
-      }, {
-        id: 2,
-        title: "Hash me",
-        done: true
-      },{
-        id: 3,
-        title: "Allow this",
-        done: false
-      }]
-    }
+  mounted() {
+    this.listTodos()
   },
 
   methods: {
-    createTodo( todoTitle ) {
-      this.todos.push({
-        id: this.todosCounter++,
-        title: todoTitle,
-      })
+    async listTodos() {
+      const response = await todoService.fetchAll()
+      this.todos = response.data
     },
-    toggleDone( id ) {
-      this.todos.forEach(todo => {
-        if (todo.id === id) {
-          todo.done = !todo.done;
-        }
-      })
+    async createTodo( todoTitle ) {
+      const todo = {
+        title: todoTitle
+      }
+      const response = await todoService.create(todo)
+      const createdTodo = response.data
+      this.todos.push(createdTodo)
     },
-    deleteTodo( id ) {
-      this.todos = this.todos.filter( todo => todo.id !== id);
+    async toggleDone( todo2Toggle ) {
+      const toggledTodo = {
+        ...todo2Toggle,
+        done: !todo2Toggle.done
+      }
+      const response = await todoService.update(toggledTodo)
+      const updatedTodo = response.data
+
+      const idx2Update = this.todos.findIndex(todo => todo.id === todo2Toggle.id);
+      if (idx2Update >= 0) {
+        this.todos[idx2Update].title = updatedTodo.title
+        this.todos[idx2Update].done = updatedTodo.done
+      }
+
+    },
+    async deleteTodo( id ) {
+      await todoService.delete(id);
+      this.todos = this.todos.filter(todo => todo.id !== id)
     }
   }
 }
