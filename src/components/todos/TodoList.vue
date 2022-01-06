@@ -25,7 +25,6 @@ https://v3.vuejs.org/style-guide/#multi-word-component-names-essential
 <script>
 import TodoListItem from './TodoListItem'
 import TodoListForm from './TodoListForm'
-import todoService from '/api/TodoService'
 import AppNavigationBar from '../shared/AppNavigationBar.vue'
 
 export default {
@@ -37,47 +36,34 @@ export default {
   // Only this should be needed then
 
   // === local state (local reactive properties) ===
-  data() {
-    return {
-      todos: []
-    }      
+  computed: {
+    todos() {
+      // use todos.todos because the namespace of the todos module is 'todos'
+      // and the state property itself is named todos
+      return this.$store.state.todos.todos
+    }
   },
 
   mounted() {
-    this.listTodos()
+    this.$store.dispatch('loadTodos')
   },
 
   methods: {
-    async listTodos() {
-      const response = await todoService.fetchAll()
-      this.todos = response.data
-    },
     async createTodo( todoTitle ) {
-      const todo = {
+      const createTodo = {
         title: todoTitle
       }
-      const response = await todoService.create(todo)
-      const createdTodo = response.data
-      this.todos.push(createdTodo)
+      this.$store.dispatch('createTodo', { createTodo })
     },
     async toggleDone( todo2Toggle ) {
       const toggledTodo = {
         ...todo2Toggle,
         done: !todo2Toggle.done
       }
-      const response = await todoService.update(toggledTodo)
-      const updatedTodo = response.data
-
-      const idx2Update = this.todos.findIndex(todo => todo.id === todo2Toggle.id);
-      if (idx2Update >= 0) {
-        this.todos[idx2Update].title = updatedTodo.title
-        this.todos[idx2Update].done = updatedTodo.done
-      }
-
+      this.$store.dispatch('toggleDone', { toggledTodo })
     },
     async deleteTodo( id ) {
-      await todoService.delete(id);
-      this.todos = this.todos.filter(todo => todo.id !== id)
+      this.$store.dispatch('deleteTodo', { id })
     }
   }
 }
