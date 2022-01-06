@@ -1,4 +1,6 @@
 <template>
+  <app-navigation-bar></app-navigation-bar>
+  
   <ul class="list-group container">
     <todo-list-item 
       v-for="todo in todos" 
@@ -24,10 +26,11 @@ https://v3.vuejs.org/style-guide/#multi-word-component-names-essential
 import TodoListItem from './TodoListItem'
 import TodoListForm from './TodoListForm'
 import todoService from '/api/TodoService'
+import AppNavigationBar from '../shared/AppNavigationBar.vue'
 
 export default {
   // === template dependencies (assets used in the template) ===
-  components: { TodoListItem, TodoListForm },
+  components: { TodoListItem, TodoListForm, AppNavigationBar },
 
   // NOTE: if implementing further functionality (e.g. sorting, filtering, etc)
   // use composition API in own <script setup> tag.

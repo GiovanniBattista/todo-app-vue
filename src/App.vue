@@ -1,16 +1,13 @@
 <template>
-  <todo-list></todo-list>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
 
-import TodoList from "./components/todos/TodoList";
-
 export default {
   name: 'App',
-  components: {
-    TodoList
-  }
 }
 </script>
 
