@@ -6,6 +6,7 @@ import TodoList from './components/todos/TodoList'
 import LoginForm from './components/auth/LoginForm'
 import SignUpForm from './components/auth/SignUpForm'
 import AppLogout from './components/auth/AppLogout'
+import axios from 'axios'
 
 function publicRouteGuard (_, __, next) {
   if (store.getters.isAuthenticated) {
@@ -35,11 +36,15 @@ const router = createRouter({
   routes,
 })
 
+// ==== defaults for axios ====
+axios.defaults.baseURL = process.env.VUE_APP_ENDPOINT
+axios.interceptors.request.use(function (config) {
+  if (store.state.auth.accessToken) {
+    config.headers.Authorization = 'Bearer ' + store.state.auth.accessToken
+  }
 
-
-// router.beforeEach((to, from) => {
-//   console.log("beforeEach: ", to, from)
-// })
+  return config
+})
 
 createApp(App)
   .use(router)

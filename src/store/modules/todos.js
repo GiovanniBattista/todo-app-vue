@@ -10,7 +10,6 @@ export default {
 
   mutations: {
     todos (state, payload) {
-      console.log("todos ", payload.todos)
       state.todos = payload.todos
     },
     addTodo (state, payload) {
@@ -34,7 +33,6 @@ export default {
   actions: {
     async loadTodos( {commit} ) {
       const response = await todoService.fetchAll()
-      console.log('load todos', response.data)
       commit('todos', { 
         todos: response.data 
       })
